@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:buscafrutas="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".MainActivity" >
+
+    <item android:id="@+id/bpersonaje"
+        android:icon="@android:drawable/ic_menu_report_image"
+        android:title="@string/bPersonaje"
+        android:orderInCategory="1"
+        buscafrutas:showAsAction="ifRoom"/>
+
+    <item android:id="@+id/instrucciones"
+        android:icon="@android:drawable/ic_menu_search"
+        android:title="@string/instrucciones"
+        android:orderInCategory="2"
+        buscafrutas:showAsAction="ifRoom"/>
+
+    <item android:id="@+id/nuevo_juego"
+        android:title="@string/nuevo_juego"
+        android:orderInCategory="3"
+        buscafrutas:showAsAction="never"/>
+
+    <item android:id="@+id/config"
+        android:title="@string/config"
+        android:orderInCategory="4"
+        buscafrutas:showAsAction="never"/>
+
+</menu>
