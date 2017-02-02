@@ -9,13 +9,12 @@
         android:icon="@android:drawable/ic_menu_report_image"
         android:title="@string/bPersonaje"
         android:orderInCategory="1"
-        buscafrutas:showAsAction="ifRoom"/>
+        buscafrutas:showAsAction="ifRoom" />
 
     <item android:id="@+id/instrucciones"
-        android:icon="@android:drawable/ic_menu_search"
         android:title="@string/instrucciones"
         android:orderInCategory="2"
-        buscafrutas:showAsAction="ifRoom"/>
+        buscafrutas:showAsAction="never" />
 
     <item android:id="@+id/nuevo_juego"
         android:title="@string/nuevo_juego"
