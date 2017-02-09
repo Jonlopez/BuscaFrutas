@@ -4,5 +4,6 @@
     <string name="instrucciones">Instrucciones</string>
     <string name="nuevo_juego">Nuevo Juego</string>
     <string name="config">Configuración del juego</string>
+    <string name="personajes">Elige personajes</string>
 
 </resources>
