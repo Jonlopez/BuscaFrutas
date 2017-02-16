@@ -1,9 +1,17 @@
 <resources>
-    <string name="app_name">BuscaFrutas</string>
-    <string name="bPersonaje">BuscaFrutas</string>
-    <string name="instrucciones">Instrucciones</string>
-    <string name="nuevo_juego">Nuevo Juego</string>
-    <string name="config">Configuración del juego</string>
-    <string name="personajes">Elige personajes</string>
+    <string name="str_app_name">BuscaFrutas</string>
+    <string name="str_bPersonaje">BuscaFrutas</string>
+    <string name="str_instrucciones">Instrucciones</string>
+    <string name="str_dlg_instrucciones">
+        El juego es tipo buscaminas: Cuando pulsas en una casilla, sale un número que identifica cuántas hipotenochas hay aldredor.
+        Ten cuidado porque si pulsas en una hipotenocha escondida, perderás.
+        Si crees o tienes la certeza de que hay una hipotenocha, haz un click largo sobre la casilla para señalarla.
+        No hagas un click largo en una casilla donde no hay una hipotenocha porque perderás. 
+        Ganas una vez hayas encontrado todas las hipotenochas, Suerte.
+    </string>
+    <string name="str_ok">Ok</string>
+    <string name="str_nuevo_juego">Nuevo Juego</string>
+    <string name="str_config">Configuración del juego</string>
+    <string name="str_personajes">Elige personajes</string>
 
 </resources>

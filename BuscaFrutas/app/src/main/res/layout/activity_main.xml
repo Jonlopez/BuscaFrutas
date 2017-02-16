@@ -10,11 +10,14 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="com.egibide.a8fprogmm09.buscafrutas.MainActivity">
 
-    <Spinner
-        android:id="@+id/sp_frutas"
+    <GridLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:prompt="@string/personajes"
-        android:spinnerMode="dropdown" />
-
+        android:layout_height="match_parent"
+        android:id="@+id/gridTablero"
+        android:columnCount="8"
+        android:rowCount="8"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true">
+    </GridLayout>
 </RelativeLayout>

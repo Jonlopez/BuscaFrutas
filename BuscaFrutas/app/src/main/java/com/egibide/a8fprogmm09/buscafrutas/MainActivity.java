@@ -1,61 +1,45 @@
 package com.egibide.a8fprogmm09.buscafrutas;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
+import android.content.res.TypedArray;
+import android.graphics.Point;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.Display;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.GridLayout;
+import android.widget.LinearLayout;
 import android.widget.Spinner;
-import android.widget.Toast;
 
-public class MainActivity extends AppCompatActivity
-        implements AdapterView.OnItemSelectedListener,
-        DialogoPersonajes.RespuestaPersonaje{
+import java.util.ArrayList;
 
-    Spinner spFrutas;
+public class MainActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
+
+    Configuracion config;
+    int width, height;
+    GridLayout tablero;
+    Game game;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        this.spFrutas = (Spinner) findViewById(R.id.sp_frutas);
 
-        loadSpinnerFrutas();
+        config = new Configuracion(8, 8);
+        calcularDimensiones();
+        tablero = (GridLayout) findViewById(R.id.gridTablero);
+        nuevoJuego();
     }
 
-    @Override
-    public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
-        System.out.println("Se presionó pos -> " + pos + " id -> " + id);
+   /* FIN SPINNER CAMBIAR EL PERSONAJE*/
 
-    }
-
-    @Override
-    public void onNothingSelected(AdapterView<?> parent) {
-        // Callback method to be invoked when the selection disappears from this
-        // view. The selection can disappear for instance when touch is
-        // activated or when the adapter becomes empty.
-    }
-
-    /**
-     * Populate the Spinner.
-     */
-    private void loadSpinnerFrutas() {
-
-        // Create an ArrayAdapter using the string array and a default spinner
-        // layout
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(
-                this, R.array.frutas, android.R.layout.simple_spinner_item);
-        // Specify the layout to use when the list of choices appears
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        // Apply the adapter to the spinner
-        this.spFrutas.setAdapter(adapter);
-
-        // This activity implements the AdapterView.OnItemSelectedListener
-        this.spFrutas.setOnItemSelectedListener(this);
-
-    }
+    /*MENU*/
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -64,35 +48,240 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    public void onRespuesta(String s) {
-        Toast.makeText(getApplicationContext(),s,Toast.LENGTH_LONG ).show();
-    }
-
-    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
 
         switch (item.getItemId()) {
             case R.id.bpersonaje:
-                //metodoAdd()
+                changePersonaje();
                 System.out.println("Se presionó cambiar personaje");
-                DialogoPersonajes dp = new DialogoPersonajes();
-                dp.show(getFragmentManager(),"Mi diálogo");
                 return true;
             case R.id.instrucciones:
-                //metodoSearch()
+                getIntrucciones();
                 System.out.println("Se presionó instrucciones");
                 return true;
             case R.id.nuevo_juego:
-                //metodoEdit()
+                nuevoJuego();
                 System.out.println("Se presionó nuevo juego");
                 return true;
             case R.id.config:
-                //metodoDelete()
+                changeConfiguracion();
                 System.out.println("Se presionó configuracion del juego");
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
     }
+
+    private void changePersonaje(){
+        AlertDialog.Builder dgl_intrucciones = new AlertDialog.Builder(this);
+        dgl_intrucciones.setTitle(getText(R.string.str_instrucciones));
+
+        Spinner spinner_frutas = new Spinner(MainActivity.this);;
+
+        ArrayAdapter<CharSequence> spinnerArrayAdapter = ArrayAdapter.createFromResource(
+                this, R.array.frutas, android.R.layout.simple_spinner_item);
+
+        spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+        spinner_frutas.setAdapter(spinnerArrayAdapter);
+
+        spinner_frutas.setOnItemSelectedListener(this);
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+
+        builder.setView(spinner_frutas);
+
+        builder.create().show();
+    }
+
+    @Override
+    public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
+
+        switch (pos){
+            case 0:
+                System.out.println("Platano");
+            break;
+            case 1:
+                System.out.println("Naranja");
+            break;
+            case 2:
+                System.out.println("Fresa");
+                break;
+            case 3:
+                System.out.println("Piña");
+                break;
+            default:
+                break;
+        }
+
+    }
+
+    //Se ejecuta cuando el spinner se deja vacio
+    @Override
+    public void onNothingSelected(AdapterView<?> parent) {
+
+    }
+
+    private void nuevoJuego(){
+
+        game = new Game(tablero, this.config);
+
+        int deficit_w = 0;
+        int deficit_h = 0;
+        switch (config.getColumnCount()){
+            case 8:
+                deficit_w = 10;deficit_h = 10;
+                break;
+            case 12:
+                deficit_h = 10;
+                break;
+            case 16:
+                deficit_w = 5;deficit_h = 5;
+                break;
+            default:
+                deficit_w = 10;deficit_h = 10;
+                break;
+        }
+
+        final ArrayList<Integer> arr_idFrutas = game.getCasillas_frutas();
+        int id_casilla = 1;
+        for(int x = 0; x < config.getColumnCount(); x++){
+            for(int y = 0; y < config.getRowCount(); y++) {
+
+                final Button btn = new Button(this);
+                btn.setId(id_casilla);
+                for (Integer curCasilla : arr_idFrutas){
+                    if(curCasilla.equals(id_casilla)){
+                        btn.setText("");
+                    }
+                }
+                btn.setLayoutParams(new LinearLayout.LayoutParams( (width / config.getColumnCount()) - deficit_w, (height / config.getRowCount()) - deficit_h));
+                btn.setBackgroundResource(R.drawable.custom_button);
+                btn.setOnClickListener(new View.OnClickListener() {
+                    public void onClick(View v) {
+                        System.out.println("boton pulsado -> "  +  v.getId());
+                        for (Integer curCasilla : arr_idFrutas){
+                            if(curCasilla.equals( v.getId())){
+                                v.setBackgroundColor(888888);
+                                btn.setText("D=");
+                                alertFinalizar("¡Has Perdido!");
+                            }
+                        }
+                    }
+                });
+
+                btn.setOnLongClickListener(new View.OnLongClickListener() {
+                    public boolean onLongClick(View v) {
+                        System.out.println("pulsado largooo");
+                        for (Integer curCasilla : arr_idFrutas){
+                            if(curCasilla.equals( v.getId())){
+                                v.setBackgroundColor(888888);
+                                btn.setText("=D");
+                                if(game.getContador_frutas() == 0)
+                                    alertFinalizar("¡Has ganado!");
+                            }
+                        }
+                        return true;
+                    }
+                });
+
+                tablero.addView(btn);
+                id_casilla += 1;
+            }
+        }
+
+    }
+
+    private void alertFinalizar(String mensaje){
+        AlertDialog.Builder dgl_intrucciones = new AlertDialog.Builder(this);
+
+        dgl_intrucciones.setTitle("El Juego a terminado");
+        dgl_intrucciones.setMessage(mensaje);
+        dgl_intrucciones.setNeutralButton(getText(R.string.str_ok), new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialogo1, int id) {
+                dialogo1.dismiss();
+                nuevoJuego();
+            }
+        });
+
+        dgl_intrucciones.show();
+    }
+
+    private void calcularDimensiones(){
+
+        Display display = getWindowManager().getDefaultDisplay();
+        Point size = new Point();
+        display.getSize(size);
+
+        int actionBarHeight = 0;
+        final TypedArray styledAttributes = getTheme().obtainStyledAttributes(
+                new int[] { android.R.attr.actionBarSize }
+        );
+
+        actionBarHeight = (int) styledAttributes.getDimension(0, 0);
+        styledAttributes.recycle();
+
+        int navigationBarHeight = 0;
+        int resourceId = getResources().getIdentifier("navigation_bar_height", "dimen", "android");
+        if (resourceId > 0) {
+            navigationBarHeight = getResources().getDimensionPixelSize(resourceId);
+        }
+
+        this.width = size.x;
+        this.height = size.y - (actionBarHeight + navigationBarHeight) + 75;
+    }
+
+    private void getIntrucciones(){
+        AlertDialog.Builder dgl_intrucciones = new AlertDialog.Builder(this);
+
+        dgl_intrucciones.setTitle(getText(R.string.str_instrucciones));
+        dgl_intrucciones.setMessage(getText(R.string.str_dlg_instrucciones));
+        dgl_intrucciones.setNeutralButton(getText(R.string.str_ok), new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialogo1, int id) {
+                dialogo1.dismiss();
+            }
+        });
+
+        dgl_intrucciones.show();
+    }
+
+    private void changeConfiguracion(){
+        AlertDialog alertDialog1;
+        CharSequence[] values = {"Facil","Medio","Dificil"};
+        AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+
+        builder.setTitle("Elige el nivel de dificultad");
+        builder.setSingleChoiceItems(values, -1, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int item) {
+
+                switch(item)
+                {
+                    case 0:
+                        config = new Configuracion(8, 8);
+                        System.out.println("Facil");
+                        break;
+                    case 1:
+                        config = new Configuracion(12, 12);
+                        System.out.println("Amateur");
+                        break;
+                    case 2:
+                        config = new Configuracion(16, 16);
+                        System.out.println("Avanzado");
+                        break;
+                    default:
+                        config = new Configuracion(8, 8);
+                        System.out.println("por defecto");
+                        break;
+                }
+
+                nuevoJuego();
+            }
+        });
+
+        alertDialog1 = builder.create();
+        alertDialog1.show();
+    }
+
+    /*FIN DE MENU*/
 
 }
