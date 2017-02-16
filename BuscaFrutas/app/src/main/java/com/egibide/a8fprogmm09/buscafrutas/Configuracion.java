@@ -6,9 +6,9 @@ package com.egibide.a8fprogmm09.buscafrutas;
 
 public class Configuracion {
 
-    private int columnCount;
-    private int rowCount;
-    private int num_frutas;
+    private int columnCount;//Número de columnas del tablero
+    private int rowCount;//Número de filas del tablero
+    private int num_frutas;//Número de frutas que contiene el tablero
 
     public Configuracion(int columnCount, int rowCount) {
         this.columnCount = columnCount;
@@ -40,6 +40,7 @@ public class Configuracion {
         this.num_frutas = num_frutas;
     }
 
+    //El número de frutas cambia segun la cantidad de casillas
     private void calculateFrutas (){
         switch (this.getColumnCount()){
             case 8:

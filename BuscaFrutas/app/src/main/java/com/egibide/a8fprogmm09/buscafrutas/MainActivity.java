@@ -31,15 +31,17 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        //Incializamos la configuracion por defecto en modo facil
         config = new Configuracion(8, 8);
+        //Calculamos las dimensiones de la pantalla para tenerlas en cuenta  a la hora de dibujar el tablero
         calcularDimensiones();
+        //Guardamos en variable Global el Grid para pintar en el
         tablero = (GridLayout) findViewById(R.id.gridTablero);
+        //Generamos el Juego por defecto en modo facil
         nuevoJuego();
     }
 
-   /* FIN SPINNER CAMBIAR EL PERSONAJE*/
-
-    /*MENU*/
+    /*MENU DE OPCIONES */
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -47,6 +49,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         return true;
     }
 
+    //Eventos al ulsar las diferentes opciones
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
 
@@ -72,6 +75,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         }
     }
 
+    //Spinner para cambiar el personaje
     private void changePersonaje(){
         AlertDialog.Builder dgl_intrucciones = new AlertDialog.Builder(this);
         dgl_intrucciones.setTitle(getText(R.string.str_instrucciones));
@@ -94,6 +98,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         builder.create().show();
     }
 
+    //Eventos al clicar los diferentes personajes
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
 
@@ -122,10 +127,13 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
     }
 
+    //Evento que Genera una nueva partida
     private void nuevoJuego(){
 
+        //Creamos el juego y le pasamos la configuración
         game = new Game(tablero, this.config);
-
+        //El deficit es lo que he calculado para que las casillas del tablero se centren correctamente
+        //Teniendo en cuenta el numero de columnas que hay
         int deficit_w = 0;
         int deficit_h = 0;
         switch (config.getColumnCount()){
@@ -142,8 +150,9 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 deficit_w = 10;deficit_h = 10;
                 break;
         }
-
+        //Es un array que acumular los id de las casillas que contienen las frutas  = (MINAS)
         final ArrayList<Integer> arr_idFrutas = game.getCasillas_frutas();
+        //Generamos el tablero y le asignamos los eventos click y LognClick
         int id_casilla = 1;
         for(int x = 0; x < config.getColumnCount(); x++){
             for(int y = 0; y < config.getRowCount(); y++) {
@@ -160,12 +169,21 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 btn.setOnClickListener(new View.OnClickListener() {
                     public void onClick(View v) {
                         System.out.println("boton pulsado -> "  +  v.getId());
+                        boolean perder = false;
                         for (Integer curCasilla : arr_idFrutas){
+
                             if(curCasilla.equals( v.getId())){
                                 v.setBackgroundColor(888888);
                                 btn.setText("D=");
                                 alertFinalizar("¡Has Perdido!");
+
+                                perder = true;
                             }
+
+                        }
+
+                        if(!perder){
+                            btn.setText(Integer.toString(game.calculateFrutasCerca(arr_idFrutas, v.getId())));
                         }
                     }
                 });
@@ -173,14 +191,25 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 btn.setOnLongClickListener(new View.OnLongClickListener() {
                     public boolean onLongClick(View v) {
                         System.out.println("pulsado largooo");
+                        boolean perder = false;
                         for (Integer curCasilla : arr_idFrutas){
                             if(curCasilla.equals( v.getId())){
                                 v.setBackgroundColor(888888);
                                 btn.setText("=D");
                                 if(game.getContador_frutas() == 0)
                                     alertFinalizar("¡Has ganado!");
-                            }
+
+                                perder = false;
+
+                            }else perder = true;
+
                         }
+
+                        if(perder){
+                            btn.setText(Integer.toString(game.calculateFrutasCerca(arr_idFrutas, v.getId())));
+                            alertFinalizar("¡Has perdido!");
+                        }
+
                         return true;
                     }
                 });
@@ -191,7 +220,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         }
 
     }
-
+    //Mensaje de Victoria o Derrota del juego
     private void alertFinalizar(String mensaje){
         AlertDialog.Builder dgl_intrucciones = new AlertDialog.Builder(this);
 
@@ -200,13 +229,14 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         dgl_intrucciones.setNeutralButton(getText(R.string.str_ok), new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialogo1, int id) {
                 dialogo1.dismiss();
-                nuevoJuego();
+                //nuevoJuego();
             }
         });
 
         dgl_intrucciones.show();
     }
 
+    //Calculo de las dimensiones de la pantalla
     private void calcularDimensiones(){
 
         Display display = getWindowManager().getDefaultDisplay();
@@ -231,6 +261,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         this.height = size.y - (actionBarHeight + navigationBarHeight) + 75;
     }
 
+    //Mensaje con las instrucciones
     private void getIntrucciones(){
         AlertDialog.Builder dgl_intrucciones = new AlertDialog.Builder(this);
 
@@ -245,6 +276,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         dgl_intrucciones.show();
     }
 
+    //Radio Buttons para cambiar la configuracion
     private void changeConfiguracion(){
         AlertDialog alertDialog1;
         CharSequence[] values = {"Facil","Medio","Dificil"};
